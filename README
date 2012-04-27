@@ -1,0 +1,21 @@
+                           Inventory-Rake-Tasks-YARD
+
+  Inventory-Rake-Tasks-YARD provides Rake¹ tasks for YARD² using your
+  Inventory³.
+
+¹ Read up on Ruby’s build tool Rake at http://rake.rubyforge.org/
+² Find out more about the YARD documentation tool at http://yardoc.org/
+³ Get information on Inventory at http://disu.se/software/inventory/
+
+§ Installation
+
+    Install Inventory-Rake-Tasks-YARD with
+
+    % gem install inventory-rake-tasks-yard
+
+§ Usage
+
+    Include the following code in your ‹Rakefile›:
+
+      require 'inventory/rake/tasks/yard-1.0'
+      Inventory::Rake::Tasks::YARD.new
