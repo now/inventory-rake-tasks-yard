@@ -3,7 +3,7 @@
 require 'inventory-1.0'
 
 class Inventory::Rake::Tasks::YARD
-  Version = Inventory.new(1, 0, 0){
+  Version = Inventory.new(1, 1, 0){
     def dependencies
       super + Inventory::Dependencies.new{
         development 'lookout', 3, 0, 0

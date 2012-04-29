@@ -20,7 +20,7 @@ class Inventory::Rake::Tasks::YARD
 
   def initialize(options = {})
     self.name = options.fetch(:name, :html)
-    self.options = options.fetch(:options, Shellwords.split('--no-private --protected --private --query "(!object.docstring.blank?&&!(YARD::CodeObjects::NamespaceObject===object.namespace&&(a=object.namespace.aliases[object])&&object.name==:eql?&&a==:==)&&!(object.visibility!=:public&&((@return.text==\'\'&&@return.types==%w\'Boolean\')||object.docstring.start_with?(\'Returns the value of attribute \', \'Sets the attribute \')||(@raise&&@raise.types=[]))))||object.root?" --markup markdown --no-stats'))
+    self.options = options.fetch(:options, [])
     self.options += Shellwords.split(ENV['OPTIONS']) if ENV.include? 'OPTIONS'
     self.inventory = options.fetch(:inventory, Inventory::Rake::Tasks.inventory)
     self.files = options.fetch(:files){ ENV.include?('FILES') ? FileList[ENV['FILES']] : inventory.lib_files }
@@ -32,10 +32,28 @@ class Inventory::Rake::Tasks::YARD
   attr_accessor :name, :options, :files, :inventory, :globals
 
   def define
+    desc 'Create .yardopts file'
+    file '.yardopts' => [__FILE__, '.yardopts.project'] do |t|
+      tmp = '%s.tmp' % t.name
+      rm([t.name, tmp], :force => true)
+      project = read('project')
+      rake_output_message '{echo %s%s} > %s' %
+        [Options, project ? ' && cat .yardopts.project' : '', tmp] if verbose
+      File.open(tmp, 'wb') do |f|
+        f.write Options
+        if project
+          f.write ' '
+          f.write project
+        end
+      end
+      chmod File.stat(tmp).mode & ~0222, tmp
+      mv tmp, t.name
+    end
+
     desc name == :html ?
       'Generate documentation in HTML format' :
       'Generate documentation for %s in HTML format' % name
-    task name do
+    task name => '.yardopts' do
       require 'yard'
       yardoc = YARD::CLI::Yardoc.new
       yardoc.parse_arguments(*arguments)
@@ -47,7 +65,15 @@ class Inventory::Rake::Tasks::YARD
 
   private
 
+  Options = '--no-private --protected --private --query "(!object.docstring.blank?&&!(YARD::CodeObjects::NamespaceObject===object.namespace&&(a=object.namespace.aliases[object])&&object.name==:eql?&&a==:==)&&!(object.visibility!=:public&&((@return.text==\'\'&&@return.types==%w\'Boolean\')||object.docstring.start_with?(\'Returns the value of attribute \', \'Sets the attribute \')||(@raise&&@raise.types=[]))))||object.root?" --markup markdown --no-stats'
+
+  def read(type)
+    File.open('.yardopts.%s' % type, 'rb', &:read)
+  rescue Errno::ENOENT
+    nil
+  end
+
   def arguments(additional = [])
-    options.dup.concat(additional).push('--').concat(files)
+    options.dup.concat(additional).concat(Shellwords.split(read('html') || '')).push('--').concat(files)
   end
 end
