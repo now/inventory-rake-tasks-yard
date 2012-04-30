@@ -20,8 +20,13 @@ class Inventory::Rake::Tasks::YARD
 
   def initialize(options = {})
     self.name = options.fetch(:name, :html)
-    self.options = options.fetch(:options, [])
-    self.options += Shellwords.split(ENV['OPTIONS']) if ENV.include? 'OPTIONS'
+    self.options = options.fetch(:options,
+                                 ['--no-private',
+                                  '--protected',
+                                  '--private',
+                                  ['--query', '"(!object.docstring.blank?&&!(YARD::CodeObjects::NamespaceObject===object.namespace&&(a=object.namespace.aliases[object])&&object.name==:eql?&&a==:==)&&!(object.visibility!=:public&&((@return.text==\'\'&&@return.types==%w\'Boolean\')||object.docstring.start_with?(\'Returns the value of attribute \', \'Sets the attribute \')||(@raise&&@raise.types=[]))))||object.root?"'],
+                                  ['--markup', 'markdown'],
+                                  '--no-stats'])
     self.inventory = options.fetch(:inventory, Inventory::Rake::Tasks.inventory)
     self.files = options.fetch(:files){ ENV.include?('FILES') ? FileList[ENV['FILES']] : inventory.lib_files }
     self.globals = options.fetch(:globals, {})
@@ -33,18 +38,12 @@ class Inventory::Rake::Tasks::YARD
 
   def define
     desc 'Create .yardopts file'
-    file '.yardopts' => [__FILE__, '.yardopts.project'] do |t|
+    file '.yardopts' => [__FILE__, 'Rakefile'] do |t|
       tmp = '%s.tmp' % t.name
       rm([t.name, tmp], :force => true)
-      project = read('project')
-      rake_output_message '{echo %s%s} > %s' %
-        [Options, project ? ' && cat .yardopts.project' : '', tmp] if verbose
+      rake_output_message 'echo %s > %s' % [options.join(' '), tmp] if verbose
       File.open(tmp, 'wb') do |f|
-        f.write Options
-        if project
-          f.write ' '
-          f.write project
-        end
+        f.write options.join(' ')
       end
       chmod File.stat(tmp).mode & ~0222, tmp
       mv tmp, t.name
@@ -58,14 +57,10 @@ class Inventory::Rake::Tasks::YARD
       yardoc = YARD::CLI::Yardoc.new
       yardoc.parse_arguments(*arguments)
       yardoc.options.merge! globals
-      Rake.rake_output_message 'yard doc %s' % Shellwords.join(arguments(yardoc.yardopts)) if verbose
+      Rake.rake_output_message 'yard doc %s' % Shellwords.shelljoin(arguments(yardoc.yardopts.dup)) if verbose
       yardoc.run(nil)
     end
   end
-
-  private
-
-  Options = '--no-private --protected --private --query "(!object.docstring.blank?&&!(YARD::CodeObjects::NamespaceObject===object.namespace&&(a=object.namespace.aliases[object])&&object.name==:eql?&&a==:==)&&!(object.visibility!=:public&&((@return.text==\'\'&&@return.types==%w\'Boolean\')||object.docstring.start_with?(\'Returns the value of attribute \', \'Sets the attribute \')||(@raise&&@raise.types=[]))))||object.root?" --markup markdown --no-stats'
 
   def read(type)
     File.open('.yardopts.%s' % type, 'rb', &:read)
@@ -74,6 +69,10 @@ class Inventory::Rake::Tasks::YARD
   end
 
   def arguments(additional = [])
-    options.dup.concat(additional).concat(Shellwords.split(read('html') || '')).push('--').concat(files)
+    additional.
+      concat(Shellwords.split(read('html') || '')).
+      concat(Shellwords.split(ENV['OPTIONS'] || '')).
+      push('--').
+      concat(files)
   end
 end
