@@ -56,8 +56,10 @@ class Inventory::Rake::Tasks::YARD
       require 'yard'
       yardoc = YARD::CLI::Yardoc.new
       yardoc.parse_arguments(*arguments)
-      yardoc.options.merge! globals
-      Rake.rake_output_message 'yard doc %s' % Shellwords.shelljoin(arguments(yardoc.yardopts.dup)) if verbose
+      globals.each do |key, value|
+        yardoc.options.globals.send '%s=' % key, value
+      end
+      rake_output_message 'yard doc %s' % Shellwords.shelljoin(arguments(yardoc.yardopts.dup)) if verbose
       yardoc.run(nil)
     end
   end
