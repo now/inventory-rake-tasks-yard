@@ -24,7 +24,7 @@ class Inventory::Rake::Tasks::YARD
                                  ['--no-private',
                                   '--protected',
                                   '--private',
-                                  ['--query', '"(!object.docstring.blank?&&!(YARD::CodeObjects::NamespaceObject===object.namespace&&(a=object.namespace.aliases[object])&&object.name==:eql?&&a==:==)&&!(object.visibility!=:public&&((@return.text==\'\'&&@return.types==%w\'Boolean\')||object.docstring.start_with?(\'Returns the value of attribute \', \'Sets the attribute \'))))||object.root?"'],
+                                  ['--query', %w{'(!object.docstring.blank?&&object.docstring.line)||object.root?'}],
                                   ['--markup', 'markdown'],
                                   '--no-stats'])
     self.inventory = options.fetch(:inventory, Inventory::Rake::Tasks.inventory)
