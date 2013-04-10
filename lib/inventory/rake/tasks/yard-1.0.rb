@@ -59,10 +59,12 @@ class Inventory::Rake::Tasks::YARD
       globals.each do |key, value|
         yardoc.options.globals.send '%s=' % key, value
       end
-      rake_output_message 'yard doc %s' % Shellwords.shelljoin(arguments(yardoc.yardopts.dup)) if verbose
+      rake_output_message 'yard doc %s' % Shellwords.shelljoin(arguments(yardopts(yardoc))) if verbose
       yardoc.run(nil)
     end
   end
+
+  private
 
   def read(type)
     File.open('.yardopts.%s' % type, 'rb', &:read)
@@ -76,5 +78,13 @@ class Inventory::Rake::Tasks::YARD
       concat(Shellwords.split(ENV['OPTIONS'] || '')).
       push('--').
       concat(files)
+  end
+
+  def yardopts(yardoc)
+    yardoc.use_yardopts_file ?
+      Shellwords.split(File.open(yardoc.options_file, 'rb', &:read)) :
+      []
+  rescue Errno::ENOENT
+    []
   end
 end
