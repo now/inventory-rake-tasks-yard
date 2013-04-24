@@ -11,13 +11,20 @@ class Inventory::Rake::Tasks::YARD
         runtime 'inventory-rake', 1, 3, 0
         runtime 'rake', 0, 9, 2, :feature => 'rake'
         optional 'yard', 0, 8, 0
+        optional 'yard-heuristics', 1, 1, 0
       }
     end
 
     def requires
-      %w'
-        shellwords
-      '
+      %w[shellwords]
+    end
+
+    def additional_libs
+      super + %w[inventory/rake/tasks/yard-1.0.rb]
+    end
+
+    def unit_tests
+      super - %w[inventory/rake/tasks/yard-1.0.rb]
     end
   }
 end

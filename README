@@ -3,9 +3,9 @@
   Inventory-Rake-Tasks-YARD provides Rake¹ tasks for YARD² using your
   Inventory³.
 
-¹ Read up on Ruby’s build tool Rake at http://rake.rubyforge.org/
-² Find out more about the YARD documentation tool at http://yardoc.org/
-³ Get information on Inventory at http://disu.se/software/inventory/
+¹ See http://rake.rubyforge.org/
+² See http://yardoc.org/
+³ See http://disu.se/software/inventory/
 
 § Installation
 
@@ -15,7 +15,63 @@
 
 § Usage
 
-    Include the following code in your ‹Rakefile›:
+    Include the following code in your ‹Rakefile› (assuming that you’ve already
+    set up Inventory-Rake¹:
 
-      require 'inventory/rake/tasks/yard-1.0'
-      Inventory::Rake::Tasks::YARD.new
+      Inventory::Rake::Tasks.unless_installing_dependencies do
+        require 'inventory-rake-tasks-yard-1.0'
+        Inventory::Rake::Tasks::YARD.new
+      end
+
+    This’ll define the following tasks:
+
+  = .yardopts (file). = Create .yardopts file; depends on the file defining
+      this task and Rakefile.
+  = html. = Generate documentation in HTML format for all lib files in the
+      inventory; depends on .yardopts file.
+
+    ‹Inventory::Rake::Tasks::YARD› takes a couple of options, but the ones you
+    might want to adjust are
+
+  = :options. = The options to pass to YARD; will be passed to
+      `Shellwords.shelljoin`.
+  = :globals. = The globals to pass to YARD.
+  = :files. = The files to process; mainly used if you want to add additional
+      files to process beyond the lib files in the inventory.
+
+    The options passed to YARD will be augmented with any options you list in a
+    file named ‹.yardopts.task›, where ‹task› is the name of the Rake task
+    invoking YARD, for example, ‹.yardopts.html› for the default
+    HTML-generating task.  You can use this to add options that are local to
+    your installation and should thus not be listed in the Rakefile itself.
+
+    See the {API documentation}² for more information.
+
+¹ See http://disu.se/software/inventory-rake/
+² See http://disu.se/software/inventory-rake-tasks-yard/api/Inventory/Rake/Tasks/YARD/
+
+§ Financing
+
+    Currently, most of my time is spent at my day job and in my rather busy
+    private life.  Please motivate me to spend time on this piece of software
+    by donating some of your money to this project.  Yeah, I realize that
+    requesting money to develop software is a bit, well, capitalistic of me.
+    But please realize that I live in a capitalistic society and I need money
+    to have other people give me the things that I need to continue living
+    under the rules of said society.  So, if you feel that this piece of
+    software has helped you out enough to warrant a reward, please PayPal a
+    donation to now@disu.se¹.  Thanks!  Your support won’t go unnoticed!
+
+¹ Send a donation:
+  https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=now%40disu%2ese&item_name=Nikolai%20Weibull%20Software%20Services
+
+§ Reporting Bugs
+
+    Please report any bugs that you encounter to the {issue tracker}¹.
+
+  ¹ See https://github.com/now/inventory-rake-tasks-yard/issues
+
+§ Authors
+
+    Nikolai Weibull wrote the code, the tests, the manual pages, and this
+    README.
