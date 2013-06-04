@@ -57,7 +57,11 @@ class Inventory::Rake::Tasks::YARD
                                   ['--markup', 'markdown'],
                                   '--no-stats'])
     self.inventory = options.fetch(:inventory, Inventory::Rake::Tasks.inventory)
-    self.files = options.fetch(:files){ ENV.include?('FILES') ? FileList[ENV['FILES']] : inventory.lib_files }
+    self.files = options.fetch(:files){
+      ENV.include?('FILES') ?
+        FileList[ENV['FILES']] :
+        (n = 0; inventory.lib_files.sort_by{ |e| [e.count('/'), n += 1] })
+    }
     self.globals = options.fetch(:globals, {})
     yield self if block_given?
     define
