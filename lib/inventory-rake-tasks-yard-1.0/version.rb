@@ -3,7 +3,7 @@
 require 'inventory-1.0'
 
 class Inventory::Rake::Tasks::YARD
-  Version = Inventory.new(1, 4, 1){
+  Version = Inventory.new(1, 4, 2){
     authors{
       author 'Nikolai Weibull', 'now@disu.se'
     }
@@ -20,7 +20,7 @@ class Inventory::Rake::Tasks::YARD
       super + Inventory::Dependencies.new{
         development 'lookout', 3, 0, 0
         development 'lookout-rake', 3, 1, 0
-        development 'yard-heuristics', 1, 1, 0
+        development 'yard-heuristics', 1, 2, 0
         runtime 'inventory-rake', 1, 6, 0
         runtime 'rake', 10, 0, 0, :feature => 'rake'
         optional 'yard', 0, 8, 0
