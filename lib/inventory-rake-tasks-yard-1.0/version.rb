@@ -8,7 +8,7 @@ class Inventory::Rake::Tasks::YARD
       author 'Nikolai Weibull', 'now@disu.se'
     }
 
-    homepage 'http://disu.se/software/inventory-rake-tasks-yard/'
+    homepage 'http://disu.se/software/inventory-rake-tasks-yard-1.0/'
 
     licenses{
       license 'LGPLv3+',
