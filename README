@@ -5,7 +5,7 @@
 
 ¹ See http://rake.rubyforge.org/
 ² See http://yardoc.org/
-³ See http://disu.se/software/inventory/
+³ See http://disu.se/software/inventory-1.0/
 
 § Installation
 
@@ -47,8 +47,8 @@
 
     See the {API documentation}² for more information.
 
-¹ See http://disu.se/software/inventory-rake/
-² See http://disu.se/software/inventory-rake-tasks-yard/api/Inventory/Rake/Tasks/YARD/
+¹ See http://disu.se/software/inventory-rake-1.0/
+² See http://disu.se/software/inventory-rake-tasks-yard-1.0/api/Inventory/Rake/Tasks/YARD/
 
 § Financing
 

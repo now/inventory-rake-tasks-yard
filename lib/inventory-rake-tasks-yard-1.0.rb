@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Namespace for [Inventory](http://disu.se/software/inventory/).  The bulk of
+# Namespace for [Inventory](http://disu.se/software/inventory-1.0/).  The bulk of
 # the library is in {Rake::Tasks::YARD}.
 class Inventory; end
 
@@ -8,7 +8,7 @@ class Inventory; end
 module Inventory::Rake
 end
 
-# Namespace for [Inventory Rake](http://disu.se/software/inventory-rake) tasks.
+# Namespace for [Inventory Rake](http://disu.se/software/inventory-rake-1.0/) tasks.
 module Inventory::Rake::Tasks
 end
 
